@@ -1,0 +1,369 @@
+/* 1. ШРИФТЫ */
+@font-face {
+    font-family: 'kom-post';
+    src: url('fonts/kom-post.woff2') format('woff2'), 
+         url('fonts/kom-post.ttf') format('truetype'); 
+    font-weight: normal; font-style: normal;
+}
+
+/* 2. ГЛОБАЛЬНЫЕ СТИЛИ */
+body, html {
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background-color: #040712;
+    font-family: 'kom-post', 'Montserrat', sans-serif; 
+    color: #A5F2F3;
+}
+
+/* 3. КНОПКА СТАРТА */
+#startBtn {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    background: rgba(165, 242, 243, 0.1);
+    border: 2px solid #A5F2F3;
+    color: #A5F2F3; font-size: 1.2em;
+    cursor: pointer; border-radius: 25px;
+    z-index: 1000; transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(165, 242, 243, 0.3);
+}
+
+#startBtn:hover {
+    background: rgba(165, 242, 243, 0.4);
+    box-shadow: 0 0 20px rgba(165, 242, 243, 0.8);
+}
+
+/* 4. ОСНОВНАЯ СЦЕНА */
+.night-scene {
+    position: relative;
+    width: 100%; height: 100%;
+    opacity: 0;
+    transition: opacity 2s ease, background 8s ease-in-out;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #010206 0%, #11142A 60%, #191D3B 100%);
+}
+
+.night-scene.active { opacity: 1; }
+
+.night-scene.final-fade {
+    background: linear-gradient(to bottom, #02040a 0%, #1a112a 60%, #3b1931 100%);
+}
+
+/* Тряска при припеве (Шторм) */
+.night-scene.storm-active { animation: shake 0.5s infinite; }
+
+@keyframes shake {
+    0%, 100% { transform: translate(0,0); }
+    25% { transform: translate(1px, 1px); }
+    50% { transform: translate(-1px, -1px); }
+    75% { transform: translate(1px, -1px); }
+}
+
+/* 5. НЕБО И ЛУНА */
+.stars::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+        radial-gradient(cyan, rgba(0,255,255,.1) 1px, transparent 2px);
+    background-size: 550px 550px, 350px 350px;
+    animation: twinkle 5s infinite;
+    opacity: 0.5; z-index: 1;
+}
+
+@keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+
+.moon {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: clamp(70px, 18vw, 140px);
+    z-index: 2;
+    opacity: 1;
+    animation: moon-float 10s ease-in-out infinite alternate;
+    transform-origin: center center;
+}
+
+@keyframes moon-float {
+    0% { transform: translate(0px, 0px) rotate(0deg); }
+    25% { transform: translate(4px, -2px) rotate(1deg); }
+    50% { transform: translate(8px, 4px) rotate(2deg); }
+    75% { transform: translate(3px, 7px) rotate(1deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.moon.final-animation-active {
+    animation: moon-final-sequence 8s cubic-bezier(0.45, 0, 0.55, 1) forwards !important;
+    transition: none;
+}
+
+@keyframes moon-final-sequence {
+    0% { opacity: 1; top: 8%; right: 12%; transform: scale(1) rotate(0deg); }
+    15% { opacity: 0; top: 8%; right: 12%; transform: scale(1) rotate(180deg); }
+    20% { opacity: 0; top: 110%; left: 50%; right: auto; transform: translateX(-50%) scale(5) rotate(0deg); }
+    100% { opacity: 0.85; top: 72%; left: 50%; right: auto; transform: translateX(-50%) scale(5) rotate(180deg); }
+}
+
+/* 6. VHS-ЭФФЕКТ */
+.vhs-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity 2s ease;
+    mix-blend-mode: screen; /* или overlay — даёт интересный эффект */
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(255, 255, 255, 0.05) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+    );
+    filter: url(#vhs-noise) drop-shadow(2px 2px 2px rgba(255, 0, 255, 0.2)) drop-shadow(-2px -2px 2px rgba(0, 255, 255, 0.2));
+    animation: vhs-shake 0.5s infinite, vhs-scan 8s linear infinite;
+}
+
+/* Анимация дрожания как у старой кассеты */
+@keyframes vhs-shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-1px, 1px); }
+    40% { transform: translate(1px, -1px); }
+    60% { transform: translate(-1px, -1px); }
+    80% { transform: translate(1px, 1px); }
+}
+
+/* Движущаяся полоса помех */
+@keyframes vhs-scan {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 200%; }
+}
+
+/* Дополнительный слой с шумом через псевдоэлемент */
+.vhs-overlay::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.2 0"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.1"/></svg>');
+    opacity: 0.2;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+/* Активация VHS */
+.night-scene.active .vhs-overlay {
+    opacity: 1;
+}
+
+/* Отключаем VHS, когда начинается шторм (класс storm-active) */
+.night-scene.storm-active .vhs-overlay {
+    opacity: 0;
+}
+
+/* 7. ЗВЕЗДЫ (JS ОБЪЕКТЫ) */
+.star-container { 
+    position: absolute; 
+    z-index: 3; 
+    pointer-events: none; 
+}
+.star-head {
+    position: absolute; 
+    width: 5px; height: 5px;
+    background: #fff; border-radius: 50%; 
+    box-shadow: 0 0 15px #fff, 0 0 30px #fff;
+}
+.star-tail {
+    position: absolute; 
+    top: 2px; left: 2px; 
+    width: 2px;
+    transform-origin: top center;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+    height: 600px; 
+    transform: rotate(-135deg);
+    opacity: 1; 
+}
+
+/* 8. ХОЛМ И СИЛУЭТ */
+.hill-landscape {
+    position: absolute; bottom: -50px; left: -10%; width: 120%; height: 35vh;
+    background: linear-gradient(to bottom, #0A1128 0%, #000 100%);
+    border-radius: 50% 50% 0 0;
+    box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.9);
+    z-index: 5;
+}
+
+.couple-silhouette {
+    position: absolute;
+    width: 180px; height: 120px;
+    left: 50%; transform: translateX(-50%);
+    bottom: 29.5vh;
+    background: url('couple.png') no-repeat center bottom;
+    background-size: contain;
+    z-index: 6; 
+    display: block; opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(165, 242, 243, 0.4));
+    animation: couple-breath 4s ease-in-out infinite alternate;
+    transition: all 5s ease-in-out;
+    will-change: transform, filter;
+}
+
+@keyframes couple-breath {
+    from { transform: translateX(-50%) translateY(0) scale(1); }
+    to { transform: translateX(-50%) translateY(-1px) scale(1.01); }
+}
+
+@media (max-width: 768px) {
+    .couple-silhouette { width: 120px; height: 80px; bottom: 31vh; }
+}
+
+.night-scene.storm-active .couple-silhouette {
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8))
+            drop-shadow(0 0 15px rgba(255, 0, 0, 0.4));
+    animation: couple-tremble 0.2s infinite;
+}
+
+@keyframes couple-tremble {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(0.5px); }
+}
+
+/* 9. ТЕКСТ ПЕСНИ (СИНХРОНИЗАЦИЯ) */
+.lyrics-container {
+    position: absolute; top: 35%; left: 50%;
+    transform: translateX(-50%); width: 90%;
+    text-align: center; z-index: 100; pointer-events: none;
+}
+
+.lyric-line {
+    position: absolute; width: 100%; left: 0; top: 0; margin: 0;
+    font-size: clamp(1.8rem, 6vw, 4.2rem); 
+    font-weight: 600; text-transform: uppercase;
+    color: #A5F2F3; text-shadow: 0 0 20px rgba(165, 242, 243, 0.8);
+    opacity: 0; visibility: hidden; filter: blur(25px);
+    transform: translateY(30px) scale(0.9);
+    transition: opacity 1s, filter 1.2s, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lyric-line.active { opacity: 1; visibility: visible; filter: blur(0); transform: translateY(0) scale(1); }
+.lyric-line.exit { opacity: 0; visibility: hidden; filter: blur(15px); transform: translateY(-30px); transition: all 0.8s ease; }
+
+/* 10. СПЕЦЭФФЕКТЫ ТЕКСТА */
+.word-lipstick {
+    position: relative; display: inline-block; color: #FFFFFF; 
+    text-shadow: 0 0 5px #FF0000, 0 0 15px #FF0033, 0 0 30px #FF0033;
+    font-weight: 800; letter-spacing: 2px;
+}
+.word-lipstick::after {
+    content: ""; position: absolute; bottom: -2px; left: 0;
+    width: 100%; height: 5px; background: #FF0033; 
+    box-shadow: 0 0 10px #FF0033, 0 0 25px rgba(255, 0, 51, 0.8);
+    border-radius: 10px; transform: scaleX(0); transform-origin: left;
+    transition: transform 1s 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.lyric-line.active .word-lipstick::after { transform: scaleX(1); }
+
+.lyric-line-wound { color: #C0C0C0 !important; }
+.word-wound {
+    position: relative; display: inline-block; color: #fff;
+    text-shadow: 0 0 5px #fff, -1px -1px 0 #FF1A4B, 1px 1px 0 #FF1A4B;
+    animation: wound-tremble 0.3s infinite;
+}
+.word-wound::after {
+    content: ""; position: absolute; top: 70%; left: 50%;
+    width: 2px; height: 0; background: #FF1A4B; box-shadow: 0 0 8px #FF1A4B;
+    opacity: 0; transition: height 3s 1s ease-in, opacity 1s 1s;
+}
+.lyric-line.active .word-wound::after { height: 70px; opacity: 1; }
+
+.lyric-line.lyric-line-tears.active { filter: url(#tears-filter); animation: drip-down 10s linear forwards; opacity: 1; visibility: visible; }
+
+@keyframes drip-down {
+    0% { transform: translateY(0); opacity: 1; filter: url(#tears-filter) blur(0); }
+    10% { opacity: 1; transform: translateY(10px); }
+    100% { transform: translateY(200px); opacity: 0; filter: url(#tears-filter) blur(15px); }
+}
+
+/* 11. МОБИЛЬНАЯ АДАПТАЦИЯ (ОБЩАЯ) */
+@media (max-width: 768px) {
+    .moon { top: 5%; right: 5%; width: 80px; }
+    .hill-landscape { height: 30vh; }
+    .lyric-line { font-size: 1.8rem; }
+}
+
+/* 12. ФИНАЛ — СООБЩЕНИЕ И ЭФФЕКТЫ */
+.night-scene.final-fade .couple-silhouette {
+    animation-duration: 10s;
+    opacity: 0;
+    filter: blur(20px) !important; 
+    transform: translateX(-50%) translateY(-100px) scale(0.9);
+}
+
+.anniversary-message {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+    filter: blur(10px);
+    transition: opacity 3s ease, filter 3s ease, transform 3s ease;
+    width: 90%;
+    max-width: 600px;
+    letter-spacing: 10px;
+    pointer-events: none;
+}
+
+.anniversary-message h2 {
+    font-size: 5rem;
+    margin-bottom: 0.5rem;
+    color: #A5F2F3;
+    text-shadow: 0 0 20px #A5F2F3;
+    animation: title-glow 2s infinite alternate;
+}
+
+.anniversary-message p {
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 0 0 10px #A5F2F3;
+}
+
+.anniversary-message.show-final {
+    opacity: 1;
+    visibility: visible;
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes title-glow {
+    from { text-shadow: 0 0 20px rgba(165, 242, 243, 0.8); }
+    to { text-shadow: 0 0 40px rgba(165, 242, 243, 1), 0 0 60px rgba(165, 242, 243, 0.6); }
+}
+
+.heart {
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: #FF1A4B;
+    margin-top: 20px;
+    animation: heart-beat 1.5s infinite ease-in-out;
+}
+
+@keyframes heart-beat { 0%, 100% { transform: scale(1); opacity: 0.8;} 50% { transform: scale(1.2); opacity: 1;} }
+
+@media (max-width: 768px) {
+    .anniversary-message h2 { font-size: 3.5rem !important; }
+    .anniversary-message p { font-size: 1.4rem !important; }
+}
+
+.flash {
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 998;
+}
