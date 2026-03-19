@@ -217,7 +217,7 @@ body, html {
 }
 
 @media (max-width: 768px) {
-    .couple-silhouette { width: 120px; height: 80px; bottom: 31vh; }
+    .couple-silhouette { width: 120px; height: 80px; bottom: 29vh; }
 }
 
 .night-scene.storm-active .couple-silhouette {
