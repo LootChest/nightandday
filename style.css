@@ -217,7 +217,10 @@ body, html {
 }
 
 @media (max-width: 768px) {
-    .couple-silhouette { width: 120px; height: 80px; bottom: 29vh; }
+    .moon { top: 5%; right: 5%; width: 80px; }
+    .hill-landscape { height: 30vh; }
+    .lyric-line { font-size: 1.8rem; }
+    .couple-silhouette { width: 120px; height: 80px; bottom: 27vh; } /* изменено с 31vh на 27vh */
 }
 
 .night-scene.storm-active .couple-silhouette {
